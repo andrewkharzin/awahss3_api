@@ -1,0 +1,19 @@
+.digital-clock {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .time.blink {
+    visibility: hidden;
+  }
+  
+  @keyframes blinkAnimation {
+    0%, 50% {
+      visibility: visible;
+    }
+    51%, 100% {
+      visibility: hidden;
+    }
+  }
+  

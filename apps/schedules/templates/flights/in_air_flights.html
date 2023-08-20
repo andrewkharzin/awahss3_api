@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>In-Air Flights</title>
+</head>
+<body>
+    <h1>In-Air Flights</h1>
+    <ul>
+        {% for flight in in_air_flights %}
+            <li>{{ flight.airline }} flight {{ flight.flight_iata }} from {{ flight.departure_airport }} ({{ flight.departure_iata }}) to {{ flight.arrival_airport }} ({{ flight.arrival_iata }}) is in the air.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,0 +1,30 @@
+/* FlightTableSkeleton.css */
+
+.skeleton-table {
+    background-color: #c2c1c121;
+    border-radius: 4px;
+    padding: 16px;
+  }
+  
+  .skeleton-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #cecbcb70;
+  }
+  
+  .skeleton-text-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .skeleton-text-line {
+    width: 80px;
+    height: 5px;
+    background-color: #71707042;
+    border-radius: 4px;
+  }
+  
+  /* ... Add other classes as needed ... */
+  

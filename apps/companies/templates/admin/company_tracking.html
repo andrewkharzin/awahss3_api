@@ -1,0 +1,31 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<h1>{{ company.name }} Tracking</h1>
+<table>
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>Action</th>
+      <th>Timestamp</th>
+      <th>Changes</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for track in tracking %}
+    <tr>
+      <td>{{ track.user.username }}</td>
+      <td>{{ track.get_action_display }}</td>
+      <td>{{ track.timestamp }}</td>
+      <td>
+        <ul>
+          {% for field, values in track.changes.items %}
+          <li>{{ field }}: {{ values.0 }} &rarr; {{ values.1 }}</li>
+          {% endfor %}
+        </ul>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

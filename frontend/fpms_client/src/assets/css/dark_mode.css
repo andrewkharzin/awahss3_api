@@ -1,0 +1,15 @@
+
+.dark {
+        --bg-color: #1a202c;
+        --text-color: #e2e8f0;
+        /* ... add more dark mode styles here ... */
+    }
+
+.dark .toggle-path {
+        background-color: var(--bg-color);
+    }
+
+.dark .toggle-handle {
+        transform: translateX(100%);
+    }
+

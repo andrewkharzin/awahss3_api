@@ -1,56 +1,55 @@
 import os
 from pathlib import Path
+from datetime import timedelta
+
+from .app import *
+# from .graphene import GRAPHENE
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-DJANGO_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-]
-
-THIRDPARTY_APPS = [
-    'djoser',
-    'rest_framework',
-    'rest_framework_simplejwt',
-    'drf_spectacular',
-    'drf_spectacular_sidecar',
-    'mptt',
-    'tinymce',
-    'phone_field',
-    'import_export',
-    'corsheaders',
-    "django_tables2",
-    "graphene_django",
-    'crispy_forms',
-    'author',
-    'channels',
-    'django_bookmark_base',
-    "taggit", 
-    'dynamic_raw_id',
-    'django_select2',
-    'admin_auto_filters',
-
-]
-    
-PROJECT_APPS = [
-    'apps.directory.airlines',
-
-]
 
 
-INSTALLED_APPS = DJANGO_APPS + THIRDPARTY_APPS + PROJECT_APPS
+INSTALLED_APPS = INSTALLED_APPS
+# GRAPHENE = GRAPHENE
+
+AUTH_USER_MODEL = 'users.User'
 
 GRAPHENE = {
   "SCHEMA": "graph.schema.schema",
 }
 
+STRAWBERRY_DJANGO = {
+    "FIELD_DESCRIPTION_FROM_HELP_TEXT": True,
+    "TYPE_DESCRIPTION_FROM_MODEL_DOCSTRING": True,
+}
+
 TIME_ZONE = 'UTC'
+
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BEAT_SCHEDULE = {
+    'update_flight_info': {
+        'task': 'apps.schedules.tasks.update_flight_info_task',
+        'schedule': timedelta(minutes=15),  # Run every 15 minutes
+    },
+}
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -67,8 +66,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static/staticfiles'),
+    os.path.join(BASE_DIR, 'frontend/client', 'public'),
 )
+
 
 MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
@@ -80,3 +80,5 @@ STATICFILES_FINDERS = (
 'django.contrib.staticfiles.finders.AppDirectoriesFinder',
  
 )
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

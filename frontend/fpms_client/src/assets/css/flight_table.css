@@ -1,0 +1,76 @@
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes moveAndBlink {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes aircraftExhaust {
+  0% {
+    opacity: 0;
+    transform: translateX(0) scale(0);
+  }
+  100% {
+    opacity: 0.6;
+    transform: translateX(-10px) scaleY(1);
+  }
+}
+.fly-blink-icon {
+  position: relative;
+  display: inline-block;
+  animation: moveAndBlink 5s linear infinite, blink 1s ease-in-out infinite;
+  vertical-align: top; /* Добавьте это свойство */
+}
+
+.fly-blink-icon::before,
+.fly-blink-icon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -10px;
+  width: 10px;
+  height: 2px;
+  background-color: rgba(0, 225, 255, 0.6);
+  animation: aircraftExhaust 1s ease-in-out infinite;
+  transform-origin: right center;
+}
+
+.fly-blink-icon::after {
+  left: 0;
+  animation-delay: 0.2s; /* Delay for second exhaust */
+}
+
+@keyframes aircraftExhaustLine {
+  0% {
+    opacity: 0;
+    transform: translateX(0) scale(0);
+  }
+  100% {
+    opacity: 0.6;
+    transform: translateY(10px) scaleY(0.6);
+  }
+}
+
+.aircraft-exhaust-line {
+  position: absolute;
+  width: 1px;
+  height: 100px;
+  background-color: rgba(255, 255, 255, 0.6);
+  transform-origin: bottom center;
+  animation: aircraftExhaustLine 3s ease-in-out infinite,
+    blink 1s ease-in-out infinite;
+}
