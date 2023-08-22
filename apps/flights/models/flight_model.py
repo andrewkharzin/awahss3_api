@@ -1,6 +1,10 @@
 from django.db import models
 from utility.date_format import format_date_template
-from apps.directory.airlines.models.airline import Airline
+from apps.directory.airlines.models.airline import Airline, Aircraft
+
+class LDM(models.Model):
+    text = models.TextField()
+    flight = models.ForeignKey('Flight', on_delete=models.CASCADE, related_name='ldm_telexes')
 
 class Flight(models.Model):
     FLIGHT_TYPE_CHOICES = [
@@ -16,16 +20,18 @@ class Flight(models.Model):
         ('Canceled', 'Canceled'),
     ]
     flight_type = models.CharField(max_length=10, choices=FLIGHT_TYPE_CHOICES)
-    flight_number = models.CharField(max_length=20)
+    flight_number = models.CharField(max_length=20, null=True, blank=True)
     flight_route = models.CharField(max_length=3, default="XXX")
-    airline = models.ForeignKey(Airline, on_delete=models.CASCADE)
+    airline = models.ForeignKey(Airline, on_delete=models.CASCADE, null=True, blank=True)
+    aircraft = models.ForeignKey(Aircraft, on_delete=models.CASCADE, null=True, blank=True)
+    ac_reg_number = models.CharField(max_length=20, null=True, blank=True, default="")
     date = models.DateField()
     time = models.TimeField()
-    eta_time = models.TimeField(null=True, blank=True, default="")
-    etd_time = models.TimeField(null=True, blank=True, default="")
+    
     description = models.TextField(blank=True)
     handling_status = models.CharField(max_length=20, choices=HANDLING_STATUS_CHOICES, default='New')
     create_flight_project = models.BooleanField(default=False)
+    ldm_telex = models.ForeignKey(LDM, on_delete=models.CASCADE, null=True, blank=True, related_name="flighs")
 
 
     def __str__(self):
@@ -33,3 +39,4 @@ class Flight(models.Model):
 
     def get_formatted_date(self):
         return format_date_template(self.date.strftime('%Y-%m-%d'))
+

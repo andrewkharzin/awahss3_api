@@ -18,6 +18,8 @@ urlpatterns = [
     path("", include("django_nextjs.urls")),
     path("", include("apps.companies.urls")),
     path("schedules/", include("apps.schedules.urls")),
+    path("", include("api.apps.users.urls")),
+    path("aircrafts/", include("apps.directory.airlines.urls"))
 
     # path('companies/', include('apps.companies.urls'))
 ]

@@ -74,3 +74,9 @@
   animation: aircraftExhaustLine 3s ease-in-out infinite,
     blink 1s ease-in-out infinite;
 }
+
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none;
+  }
+}

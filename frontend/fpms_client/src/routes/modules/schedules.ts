@@ -1,5 +1,7 @@
 import ArrivalFlights from '../../pages/schedules/ArrivalPage';
 import FreightersFlights from '../../pages/schedules/FreightersPage';
+import CreateFreight from '../../pages/schedules/CreateFreight';
+// import FlightGantt from '../../components/flights/FlightGantt';
 
 const scheduleRoutes = [
   {
@@ -9,6 +11,11 @@ const scheduleRoutes = [
   {
     path: '/schedules/freighters/table',
     component: FreightersFlights,
+  },
+ 
+  {
+    path: '/schedules/freighters/add',
+    component: CreateFreight,
   },
 ];
 

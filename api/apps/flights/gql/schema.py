@@ -45,8 +45,54 @@ class Query:
         return FlightProject.objects.all()
 
 
+
+@strawberry.type
+class Mutation:
+    @strawberry.mutation
+    def create_flight(
+        self,
+        airline_iatacode: str,
+        flight_type: str,
+        handling_status: str,
+        date: str
+    ) -> FlightType:
+        flight = Flight.objects.create(
+            airline__codeIataAirline=airline_iatacode,
+            flight_type=flight_type,
+            handling_status=handling_status,
+            date=date
+        )
+        return flight
+
+    @strawberry.mutation
+    def update_flight(
+        self,
+        flight_id: int,
+        airline_iatacode: Optional[str] = None,
+        flight_type: Optional[str] = None,
+        handling_status: Optional[str] = None,
+        date: Optional[str] = None
+    ) -> FlightType:
+        flight = Flight.objects.get(pk=flight_id)
+
+        if airline_iatacode:
+            flight.airline__codeIataAirline = airline_iatacode
+
+        if flight_type:
+            flight.flight_type = flight_type
+
+        if date:
+            flight.date = date
+
+        if handling_status:
+            flight.handling_status = handling_status
+
+        flight.save()
+        return flight
+    
 schema = strawberry.Schema(
     query=Query,
+    mutation=Mutation,
     extensions=[
         DjangoOptimizerExtension,
     ],

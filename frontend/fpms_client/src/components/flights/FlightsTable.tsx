@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import { useTheme } from "../../layouts/ThemeContext";
 import { FlightType } from "../../types/flight/types";
 import { getAllFlights } from "../../api/api"; // Import the specific function
@@ -19,6 +19,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { updateFilters } from "../../store/reducers/flights/actions";
 import Modal from "../flights/modals/modal";
+import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import AddFlight from './AddFlight'; // Import the AddFlight component
+import DatePicker from "./ui/DatePicker"
 
 const filterFlights = (
   flight: FlightType,
@@ -70,10 +74,22 @@ const FlightsTable: React.FC = () => {
   const [dateFilter, setDateFilter] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedFlight, setSelectedFlight] = useState<FlightType | null>(null);
+  const [showAddFlightModal, setShowAddFlightModal] = useState(false)
+  const [selectedDate, setSelectedDate] = useState<string | undefined>(undefined);
+
 
   const [open, setOpen] = useState(false);
   const handleToggle = () => setOpen((prev) => !prev);
 
+  const handleAddFlight = (newFlight: FlightType) => {
+    setFlights([...flights, newFlight]);
+  };
+
+  const handleDatePickerChange = (date: string) => {
+    setSelectedDate(date);
+  };
+
+  
   const formatTime = (time: string) => {
     const [hours, minutes] = time.split(":");
     return `${hours}:${minutes}`;
@@ -167,18 +183,25 @@ const FlightsTable: React.FC = () => {
   useEffect(() => {
     console.log("Selected flight (inside useEffect):", selectedFlight);
   }, [selectedFlight]);
+  
+
+  
 
   return (
     <div className="w-full overflow-x-auto">
       {/* <FlightTableSkeleton /> */}
-      <div className="py-10 md:flex md:items-center md:space-x-4 md:space-y-0">
-        <button onClick={toggleDisplayMode} className="btn btn-neutral">
+      <div className="flex md:flex md:items-center md:space-x-4 md:space-y-0 sm:flex sm:items-center sm:space-x-4 sm:space-y-0">
+        
+        <button
+          onClick={toggleDisplayMode}
+          className={`btn btn-neutral ${displayInUTC ? 'md:hidden' : ''} sm:btn-sm`}
+        >
           {displayInUTC ? "Local" : "UTC"}
         </button>
-        <button onClick={clearFilters} className="btn btn-neutral">
+        <button onClick={clearFilters} className="btn btn-neutral sm:btn-sm">
           Clear
         </button>
-        <button onClick={toggleSortOrder} className="btn btn-neutral">
+        <button onClick={toggleSortOrder} className="btn btn-neutral sm:btn-sm">
           {sortAscending ? "Sort Descending" : "Sort Ascending"}
         </button>
 
@@ -211,6 +234,17 @@ const FlightsTable: React.FC = () => {
           <option value="Canceled">Canceled</option>
           {/* Add more options if needed */}
         </select>
+        <div className="max-w-xs w-full md:max-w-sm">
+          <ReactDatePicker
+            selected={dateFilter ? new Date(dateFilter) : null}
+            onChange={(date) => setDateFilter(date ? date.toISOString().split("T")[0] : null)}
+            placeholderText="Select a date"
+            className="bg-base-100 border border-gray-700  text-sm  rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-base-100 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-gray-500 dark:focus:border-blue-500"
+          />
+        </div>
+
+        {/* <AddFlight onFlightAdded={handleAddFlight} /> */}
+        {/* Add the "Add Flight" button */}
       </div>
       <div className="w-full overflow-x-auto py-5 mx-2">
         {loading ? (
@@ -224,8 +258,8 @@ const FlightsTable: React.FC = () => {
                 <th className="p-2 text-left text-sm uppercase">
                   Flight number
                 </th>
-                <th className="p-2 text-left text-sm uppercase">Route</th>
-                <th className="p-2 text-left text-sm uppercase">
+                <th className="p-2 text-left text-sm uppercase hide-on-mobile">Route</th>
+                <th className="p-2 text-left text-sm uppercase hide-on-mobile">
                   <div
                     className="tooltip"
                     data-tip="Planning Flight Time and Date"
@@ -233,12 +267,12 @@ const FlightsTable: React.FC = () => {
                     <button className="btn btn-sm">PFT</button>
                   </div>
                 </th>
-                <th className="p-2 text-left text-sm uppercase">
+                <th className="p-2 text-left text-sm uppercase hide-on-mobile">
                   <div className="tooltip" data-tip="Arrival or Departure">
                     <button className="btn btn-sm">Type</button>
                   </div>
                 </th>
-                <th className="p-2 text-left text-sm uppercase">
+                <th className="p-2 text-left text-sm uppercase hide-on-mobile">
                   <div className="tooltip" data-tip="Handling status">
                     <button className="btn btn-sm">Status</button>
                   </div>
@@ -322,7 +356,7 @@ const FlightsTable: React.FC = () => {
                       </button>
                     </div>
                   </td>
-                  <td className="p-2 text-left">
+                  <td className="p-2 text-left hide-on-mobile">
                     {flight.flightType === "departure" ? (
                       <>
                         <span className="font-bold text-slate-500">SVO</span>
@@ -349,7 +383,7 @@ const FlightsTable: React.FC = () => {
                       </>
                     )}
                   </td>
-                  <td className="p-2 text-left font-normal text-slate-500">
+                  <td className="p-2 text-left font-normal text-slate-500 hide-on-mobile">
                     <div className="flex items-center">
                       <FontAwesomeIcon
                         icon={faClock}
@@ -363,11 +397,11 @@ const FlightsTable: React.FC = () => {
                     </div>
                   </td>
                   <td className="p-2 text-left">
-                    <span className="font-bold uppercase text-slate-500">
+                    <span className="font-bold uppercase text-slate-500 hide-on-mobile">
                       {flight.flightType}
                     </span>
                   </td>
-                  <td className="p-2">
+                  <td className="p-2 hide-on-mobile">
                     {flight.handlingStatus === "New" ? (
                       <span className="flex items-center">
                         <FontAwesomeIcon

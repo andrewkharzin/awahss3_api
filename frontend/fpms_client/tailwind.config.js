@@ -6,7 +6,9 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [require("daisyui")],  
+  plugins: [
+    require("daisyui"),
+  ],  
   variants: {
     extend: {
       transform: ['hover', 'focus', 'active', 'group-hover'],

@@ -1,0 +1,15 @@
+{% extends "admin/edit_inline/tabular.html" %}
+
+{% block inline_field_sets %}
+  <div class="inline-related">
+    <div class="parse-container">
+      <input type="hidden" id="{{ form.parse_button.id_for_label }}" name="{{ form.parse_button.name }}" value="0">
+      <input type="hidden" id="{{ form.parse_status.id_for_label }}" name="{{ form.parse_status.name }}" value="">
+      <button type="button" class="parse-button" data-formset-prefix="{{ inline_admin_formset.formset.prefix }}">
+        Parse and Check
+      </button>
+      <div class="parse-status" id="parse-status-{{ inline_admin_formset.formset.prefix }}"></div>
+    </div>
+    {{ inline_admin_formset.form.as_table }}
+  </div>
+{% endblock %}
