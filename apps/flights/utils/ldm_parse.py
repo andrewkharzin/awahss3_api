@@ -1,6 +1,10 @@
 import re
+import logging
+
+logger = logging.getLogger(__name__)
 
 def parse_ldm_text(ldm_text):
+    print("Parsing stage:")
     pattern = r'(\w{2})(\d+)/(\d+)\.(\w+)\.(\w+)\.(\d+)/(\d+)'
     match = re.search(pattern, ldm_text)
 
@@ -16,7 +20,8 @@ def parse_ldm_text(ldm_text):
             'index2': index2,
             'number2': number2,
         }
-        print("Parsed Data:", parsed_data)  # Print the parsed data
+        print("Parsed Flights:", flights, flush=True)
+        logger.debug("Parsed Flights: %s", flights) # Print the parsed data
         return parsed_data
 
     return None

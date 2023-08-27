@@ -1,0 +1,15 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div class="submit-row">
+    <p>
+        Are you sure you want to process and create flights for the selected Charter Flights?
+        <br>
+        This action will create multiple Charter Flight instances based on the provided messages.
+    </p>
+    <div class="submit-row">
+        <input type="submit" value="Yes, process and create flights" class="default" name="apply">
+        <a href="{% url opts|admin_urlname:'changelist' %}" class="cancel-link">Cancel</a>
+    </div>
+</div>
+{% endblock %}

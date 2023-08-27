@@ -1,0 +1,16 @@
+{% load static %}
+
+<div class="inline-group">
+    <h2>{{ inline_admin_formset.opts.verbose_name_plural|capfirst }}</h2>
+    {% if inline_admin_formset.formset.empty_form %}
+        <p>{% blocktrans with inline_admin_formset.opts.verbose_name as name %}The {{ name }} is empty.{% endblocktrans %}</p>
+    {% else %}
+        {% for form in inline_admin_formset %}
+            {{ form }}
+            <div class="parse-check">
+                <button type="button" class="parse-btn">Check Parse</button>
+                <span class="parse-result"></span>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>

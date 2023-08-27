@@ -9,6 +9,7 @@ from django.dispatch import receiver
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    username = models.CharField(_('username'), max_length=30, unique=True)
     email = models.EmailField(_('email address'), unique=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -18,7 +19,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # following = models.ManyToManyField("self", blank=True, related_name="followers", symmetrical=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['username']
 
     objects = UserManager()
 

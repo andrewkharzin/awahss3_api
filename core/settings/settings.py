@@ -1,5 +1,6 @@
 
 from .base import *
+from datetime import timedelta
 from .middleware import *
 from .templates import *
 from .db import *
@@ -31,6 +32,14 @@ CORS_ALLOW_CREDENTIALS = True
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
+
+# if DEBUG:
+#     CORS_ALLOW_ALL_ORIGINS = True
+# else:
+#     CORS_ALLOWED_ORIGINS = [
+#         "http://localhost:3000/",
+#         "http://127.0.0.1:3000/",
+#     ]
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
@@ -76,16 +85,27 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-JWT_AUTH = {
-    'JWT_VERIFY_EXPIRATION': True,
-    'JWT_ALLOW_REFRESH': True,
-    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
-    'JWT_PAYLOAD_HANDLER': 'graphql_jwt.utils.jwt_payload',
-    'JWT_PAYLOAD_GET_USER_ID_HANDLER': 'graphql_jwt.utils.jwt_get_user_id_from_payload_handler',
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'myproject.schema.jwt_response_payload_handler',
-    'JWT_SECRET_KEY': 'mysecretkey',
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
+    "UPDATE_LAST_LOGIN": True,
+    "SIGNING_KEY": "complexsigningkey",  # generate a key and replace me
+    "ALGORITHM": "HS512",
 }
 
+SITE_ID = 1
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "none"
+
+
+REST_AUTH = {
+    "USE_JWT": True,
+    "JWT_AUTH_HTTPONLY": False,
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
