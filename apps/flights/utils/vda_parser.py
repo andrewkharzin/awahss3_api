@@ -2,7 +2,7 @@ import re
 from datetime import datetime
 import pytz
 
-timezone = pytz.timezone('UTC')  # Adjust the timezone as needed
+timezone = pytz.timezone('UTC') 
 
 def parse_iata_code(text):
     iata_match = re.search(r'\(([A-Z]{3})/([A-Z]{4})\)', text)
@@ -10,35 +10,11 @@ def parse_iata_code(text):
         departure_iata = iata_match.group(1)
         arrival_iata = iata_match.group(2)
         return departure_iata, arrival_iata
-    print(departure_iata)    
+    print("Failed to parse IATA code in text:", text)
     return None, None
 
-# def parse_datetime(datetime_str):
-#     datetime_pattern = re.compile(r'(\d{2})([A-Z]{3})/(\d{4})(\d{2})(\d{2})Z')
-#     datetime_match = datetime_pattern.match(datetime_str)
-    
-#     if datetime_match:
-#         day = int(datetime_match.group(1))
-#         month_str = datetime_match.group(2)
-#         month_dict = {'JAN': 1, 'FEB': 2, 'MAR': 3, 'APR': 4, 'MAY': 5, 'JUN': 6, 'JUL': 7, 'AUG': 8, 'SEP': 9, 'OCT': 10, 'NOV': 11, 'DEC': 12}
-#         month = month_dict.get(month_str)
-#         year = int(datetime_match.group(3))
-#         hour = int(datetime_match.group(4))
-#         minute = int(datetime_match.group(5))
-        
-#         print(parse_datetime)
-#         return timezone.localize(datetime(year, month, day, hour, minute))
-#     else:
-#         raise ValueError("Invalid datetime format: {}".format(datetime_str))
-
-# datetime_str = "31AUG/1730Z"
-# print("Datetime string:", datetime_str)
-# parsed_datetime = parse_datetime(datetime_str)
-# print(parsed_datetime)
-
-from datetime import datetime, timedelta
-
 def convert_custom_to_standard(custom_datetime_str):
+    print("Input custom_datetime_str:", custom_datetime_str)
     # Convert custom format to standard format
     day = int(custom_datetime_str[:2])
     month_str = custom_datetime_str[2:5]
@@ -49,29 +25,31 @@ def convert_custom_to_standard(custom_datetime_str):
     hour = int(time_str[:2])
     minute = int(time_str[2:4])
     standard_datetime_str = "{}-{:02d}-{:02d} {:02d}:{:02d}:00".format(year, month, day, hour, minute)
+    print("Converted standard_datetime_str:", standard_datetime_str)
     return standard_datetime_str
 
 def parse_datetime(datetime_str):
     try:
         standard_datetime_str = convert_custom_to_standard(datetime_str)
         parsed_datetime = datetime.strptime(standard_datetime_str, '%Y-%m-%d %H:%M:%S')
+        print("Parsed datetime:", parsed_datetime)
         return parsed_datetime
     except Exception as e:
+        print("Error parsing datetime:", e)
         raise ValueError("Invalid datetime format: {}".format(datetime_str))
 
-
-
-
 def parse_header(text):
+    aircraft_type = None
+    registration_number = None
+    
     header_match = re.search(r'AIRCRAFT:\s*([\w-]+),\s*RA-(\d+)', text)
     if header_match:
         aircraft_type = header_match.group(1)
         registration_number = header_match.group(2)
-        return aircraft_type, registration_number
-    print(aircraft_type)    
-    return None, None
+    
+    return aircraft_type, registration_number
 
-def parse_ldm_text(text):
+def parse_msg_slot(text):
     aircraft_type, registration_number = parse_header(text)
     current_year = datetime.now().year
 
@@ -87,7 +65,7 @@ def parse_ldm_text(text):
         if line.startswith("VDA"):
             if current_flight:
                 flights.append(current_flight)
-
+           
             flight_info = line.split(maxsplit=1)
             current_flight = {
                 'flight_number': flight_info[0],
@@ -109,10 +87,21 @@ def parse_ldm_text(text):
             if len(segment_info) >= 5:
                 if 'segments' not in current_flight:
                     current_flight['segments'] = []
+                if 'segments' not in current_flight:
+                    current_flight['segments'] = []
 
+                date_time = parse_datetime(segment_info[3])
+                if date_time:
+                    print("Date Time check:", date_time)
+                    # date_time = timezone.localize(date_time)
+                    print("Localized:", date_time)
+                else:
+                  continue 
+                
+                
                 current_segment = {
                     'route': segment_info[0],
-                    'date_time': parse_datetime(segment_info[3]),
+                    'date_time': date_time,
                     'description': segment_info[4]
                 }
 
@@ -121,13 +110,27 @@ def parse_ldm_text(text):
                 elif 'ЗАГРУЗКА' in current_segment['description']:
                     current_flight['action_code'] = 'ЗАГРУЗКА'
 
-                formatted_date_time = current_segment['date_time'].strftime('%Y-%m-%d %H:%M:%S')
+                formatted_date_time = date_time.strftime('%Y-%m-%d %H:%M:%S')
+                print("Formated date time:", formatted_date_time)
                 current_segment['date_time'] = formatted_date_time
                 
                 current_flight['segments'].append(current_segment)
 
     if current_flight:
         flights.append(current_flight)
-    print(flights)
-    print(parse_datetime)
     return flights
+
+
+# Test message
+test_message = """AIRCRAFT: IL-76TD-90VD, RA-76503 OR SUBST
+   VDA722 ZHENGZHOU/XINZH (CGO/ZHCC) ETD 26AUG/2150Z ЗАГРУЗКА
+   NOVOSIBIRSK/TOL (OVB/UNNT) ETA 27AUG/0320Z
+   VDA722 NOVOSIBIRSK/TOL (OVB/UNNT) ETD 27AUG/0620Z
+   MOSCOW/SHEREMET (SVO/UUEE) ETA 27AUG/1050Z РАЗГРУЗКА"""
+
+# Call the parser function with the test message
+parsed_flights = parse_msg_slot(test_message)
+
+# Print the parsed flights
+for parsed_flight in parsed_flights:
+    print(parsed_flight)

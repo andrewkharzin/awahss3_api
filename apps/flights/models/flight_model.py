@@ -1,6 +1,6 @@
 from django.db import models
 import logging
-from apps.flights.utils.msg_text import parse_ldm_text
+from apps.flights.utils.vda_parser import parse_msg_slot
 from utility.date_format import format_date_template
 from apps.directory.airlines.models.airline import Airline, Aircraft
 
@@ -48,7 +48,9 @@ class Flight(models.Model):
 
 class CharterFlight(models.Model):
     flight_number = models.CharField(max_length=20, null=True, blank=True)
-    flight_data_time = models.DateTimeField(null=True, blank=True)
+    flight_date = models.DateField(null=True, blank=True)
+    flight_time = models.TimeField(null=True, blank=True)
+    # flight_data_time = models.CharField(max_length=20, null=True, blank=True)
     aircraft_type = models.CharField(max_length=50, null=True, blank=True)
     registration_number = models.CharField(max_length=20, null=True, blank=True)
     flight_route = models.CharField(max_length=100, null=True, blank=True)
@@ -60,31 +62,3 @@ class CharterFlight(models.Model):
 
     def __str__(self):
         return f"Charter Flight {self.flight_number}"
-
-    def save_parsed_flights(self):
-        parsed_flights = parse_ldm_text(self.message_code)
-        
-        for parsed_flight in parsed_flights:
-            flight_number = parsed_flight.get('flight_number', '')
-            aircraft_type = parsed_flight.get('aircraft_type', '')
-            registration_number = parsed_flight.get('registration_number', '')
-            flight_route = parsed_flight.get('flight_route', '')
-            departure_iata = parsed_flight.get('departure_iata', '')
-            arrival_iata = parsed_flight.get('arrival_iata', '')
-            action_code = parsed_flight.get('action_code', '')
-            
-            try:
-                charter_flight = CharterFlight.objects.create(
-                    flight_number=flight_number,
-                    aircraft_type=aircraft_type,
-                    registration_number=registration_number,
-                    flight_route=flight_route,
-                    departure_iata=departure_iata,
-                    arrival_iata=arrival_iata,
-                    message_code=self.message_code,
-                    action_code=action_code
-                )
-                logger.info("Saved CharterFlight: %s", charter_flight)
-            except Exception as e:
-                logger.error("Error while saving CharterFlight: %s", e)
-                # Обработка ошибки (если требуется)

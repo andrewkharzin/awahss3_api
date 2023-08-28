@@ -11,8 +11,9 @@ from django.urls import reverse
 from django import forms
 from django.utils.html import format_html
 from .models.project import FlightProject
+from apps.flights.models.flight_model import CharterFlight
 from django.utils.translation import gettext_lazy as _
-from apps.flights.utils.vda_parse import parse_ldm_text, create_flights_from_code
+from apps.flights.utils.vda_parser import parse_msg_slot
 
 class LDMInlineForm(forms.ModelForm):
     class Meta:
@@ -150,45 +151,46 @@ class FlightAdmin(admin.ModelAdmin):
         return super().changelist_view(request, extra_context=extra_context)
 
     
-    def save_model(self, request, obj, form, change):
-        print("Before saving Flight model...")
+    # def save_model(self, request, obj, form, change):
+    #     print("Before saving Flight model...")
         
-        super().save_model(request, obj, form, change)
+    #     super().save_model(request, obj, form, change)
 
-        if obj.create_flight_project and not obj.flight_project:
-            print("Creating Flight Project")
-            # Create FlightProject instance with automated name
-            flight_project = FlightProject.objects.create(flight=obj)
-            obj.flight_project = flight_project
-            obj.save()
+    #     if obj.create_flight_project and not obj.flight_project:
+    #         print("Creating Flight Project")
+    #         # Create FlightProject instance with automated name
+    #         flight_project = FlightProject.objects.create(flight=obj)
+    #         obj.flight_project = flight_project
+    #         obj.save()
         
-        if obj.ldm_telexes.exists():
-            ldm_instance = obj.ldm_telexes.first()
-            if ldm_instance.text:
-                parsed_flights = parse_ldm_text(ldm_instance.text)
-                create_flights_from_code(parsed_flights)
-                print("Parsing and creating Flight instances...")
+    #     if obj.ldm_telexes.exists():
+    #         ldm_instance = obj.ldm_telexes.first()
+    #         if ldm_instance.text:
+    #             parsed_flights = parse_msg_slot(ldm_instance.text)
+                
+    #             create_flights_from_code(parsed_flights)
+    #             print("Parsing and creating Flight instances...")
 
-    def save_formset(self, request, form, formset, change):
-        instances = formset.save(commit=False)
-        for instance in instances:
-            if instance.flight:
-                try:
-                    ldm_instance = LDM.objects.get(id=instance.flight.ldm_telex)
-                    if ldm_instance.text:
-                        print("Parsing and creating Flight instances...")
-                        parsed_flights = parse_ldm_text(ldm_instance.text)
-                        print("Parsed Flights:", parsed_flights)
-                        if parsed_flights:
-                            parsed_flight = parsed_flights[0]
-                            print("Parsed Flight:", parsed_flight)
-                            instance.flight_number = parsed_flight['flight_number']
-                            instance.flight_route = parsed_flight['flight_route']
-                            instance.date = parsed_flight['date_time'].split()[0]
-                            instance.time = parsed_flight['date_time'].split()[1]
-                except LDM.DoesNotExist:
-                    pass  # Handle the case where the related LDM instance does not exist
-        formset.save()
+    # def save_formset(self, request, form, formset, change):
+    #     instances = formset.save(commit=False)
+    #     for instance in instances:
+    #         if instance.flight:
+    #             try:
+    #                 ldm_instance = LDM.objects.get(id=instance.flight.ldm_telex)
+    #                 if ldm_instance.text:
+    #                     print("Parsing and creating Flight instances...")
+    #                     parsed_flights = parse_msg_slot(ldm_instance.text)
+    #                     print("Parsed Flights:", parsed_flights)
+    #                     if parsed_flights:
+    #                         parsed_flight = parsed_flights[0]
+    #                         print("Parsed Flight:", parsed_flight)
+    #                         instance.flight_number = parsed_flight['flight_number']
+    #                         instance.flight_route = parsed_flight['flight_route']
+    #                         instance.date = parsed_flight['date_time'].split()[0]
+    #                         instance.time = parsed_flight['date_time'].split()[1]
+    #             except LDM.DoesNotExist:
+    #                 pass  # Handle the case where the related LDM instance does not exist
+    #     formset.save()
 
 
 
@@ -199,81 +201,78 @@ admin.site.register(Note)
 admin.site.register(FlightProject, FlightProjectAdmin)
 
 
-# Import for Charters flights
-from .models.flight_model import CharterFlight
-from .utils.msg_text import parse_ldm_text
 
 class CharterFlightAdmin(admin.ModelAdmin):
-    list_display = ('flight_number', 'aircraft_type', 'registration_number', 'flight_route')
+    list_display = ('flight_number', 'aircraft_type', 'action_code', 'registration_number', 'iata')
     actions = ['process_and_create_flights']
+    list_filter = ['iata', 'action_code']
+
 
 
     def save_model(self, request, obj, form, change):
         if obj.message_code:
-            parsed_flights = parse_ldm_text(obj.message_code)
+            parsed_flights = parse_msg_slot(obj.message_code)
+            print("Parsed flights:", parsed_flights)
+
+            # flight_date = None
+            # flight_time = None
+            # flight_date_time = None 
+            
             for parsed_flight in parsed_flights:
-                flight_number = parsed_flight.get('flight_number', '')
-                aircraft_type = parsed_flight.get('aircraft_type', '')
-                registration_number = parsed_flight.get('registration_number', '')
-                flight_route = parsed_flight.get('flight_route', '')
-                departure_iata = parsed_flight.get('departure_iata', '')
-                arrival_iata = parsed_flight.get('arrival_iata', '')
+                print("Parsing flight:", parsed_flight)
                 action_code = parsed_flight.get('action_code', '')
-                flight_data_time = parsed_flight.get('date_time', '')
-                if flight_data_time:
-                    formatted_date_time = flight_data_time.strftime('%d.%m.%Y %H:%M')
-                else:
-                    formatted_date_time = None
+                flight_route = parsed_flight.get('flight_route', '')
+                # flight_date_time_str = parsed_flight.get('date_time', '')
+                
+                if ('РАЗГРУЗКА' in action_code or 'ЗАГРУЗКА' in action_code) and 'MOSCOW/SHEREMET (SVO/UUEE) ETA' and 'MOSCOW/SHEREMET (SVO/UUEE) ETD' in flight_route:
+                    # flight_date_time = datetime.datetime.strptime(flight_date_time_str, '%Y-%m-%d %H:%M:%S')
+                    # if flight_date_time_str:  # Check if the flight_date_time_str is not empty
+                    #     flight_date_time = datetime.datetime.strptime(flight_date_time_str, '%Y-%m-%d %H:%M:%S')
+                    #     flight_date = flight_date_time.date()
+                    #     flight_time = flight_date_time.time()
+                    
+                    # Только если условия выполняются, создаем запись
+                    flight_number = parsed_flight.get('flight_number', '')
+                    aircraft_type = parsed_flight.get('aircraft_type', '')
+                    registration_number = parsed_flight.get('registration_number', '')
+                    departure_iata = parsed_flight.get('departure_iata', '')
+                    arrival_iata = parsed_flight.get('arrival_iata', '')
+                    flight_data_time = parsed_flight.get('date_time', '')
+                    if flight_data_time:
+                        formatted_date_time = flight_data_time.strftime('%d.%m.%Y %H:%M')
+                    else:
+                        formatted_date_time = None
 
-                slot_msg = f"{flight_number} {aircraft_type} {registration_number} {flight_route} {action_code}"
+                    slot_msg = f"{flight_number} {aircraft_type} {registration_number} {flight_route} {action_code}"
 
-                print("Parsed Values:")
-                print("flight_data_time:", flight_data_time)
-                print("flight_number:", flight_number)
-                print("aircraft_type:", aircraft_type)
-                print("registration_number:", registration_number)
-                print("flight_route:", flight_route)
-                print("departure_iata:", departure_iata)
-                print("arrival_iata:", arrival_iata)
-                print("action_code:", action_code)
+                    print("Parsed Values:")
+                    print("flight_data_time:", flight_data_time)
+                    print("flight_number:", flight_number)
+                    print("aircraft_type:", aircraft_type)
+                    print("registration_number:", registration_number)
+                    print("flight_route:", flight_route)
+                    print("departure_iata:", departure_iata)
+                    print("arrival_iata:", arrival_iata)
+                    print("action_code:", action_code)
 
-                charter_flight = CharterFlight.objects.create(
-                    flight_number=flight_number,
-                    aircraft_type=aircraft_type,
-                    registration_number=registration_number,
-                    flight_route=flight_route,
-                    iata=departure_iata,
-                    icao=arrival_iata,
-                    message_code=obj.message_code,
-                    action_code=action_code,
-                    slot_msg=slot_msg,
-                    flight_data_time=formatted_date_time  # Populate flight_data_time here
-                )
+                    charter_flight = CharterFlight.objects.create(
+                        flight_number=flight_number,
+                        aircraft_type=aircraft_type,
+                        registration_number=registration_number,
+                        flight_route=flight_route,
+                        iata=departure_iata,
+                        icao=arrival_iata,
+                        message_code=obj.message_code,
+                        action_code=action_code,
+                        slot_msg=slot_msg,
+                        # flight_data_time=formatted_date_time
+                        # flight_date=flight_date,  # Use flight_date instead of flight_data
+                        # flight_time=flight_time
+                    )
+                    print("Created CharterFlight:", charter_flight)
 
         super().save_model(request, obj, form, change)
 
-    def process_and_create_flights(self, request, queryset):
-        for obj in queryset:
-            parsed_flights = parse_ldm_text(obj.flight_route)
-            for flight_data in parsed_flights:
-                charter_flight = CharterFlight.objects.create(
-                    flight_number=flight_data['flight_number'],
-                    aircraft_type=flight_data['aircraft_type'],
-                    registration_number=flight_data['registration_number'],
-                    flight_route=flight_data['flight_route'],
-                    departure_iata=flight_data.get('departure_iata', ''),
-                    arrival_iata=flight_data.get('arrival_iata', '')
-                )
-
-                segments = flight_data.get('segments', [])
-                for segment in segments:
-                    CharterFlight.objects.create(
-                        flight_number=charter_flight,
-                        segment_route=segment['route'],
-                        segment_date_time=segment['date_time'],
-                        segment_description=segment['description']
-                    )
-            self.message_user(request, f"Processed and created flights for {obj}")
-    process_and_create_flights.short_description = "Process and Create Flights"
+    
 
 admin.site.register(CharterFlight, CharterFlightAdmin)

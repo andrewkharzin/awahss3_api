@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from apps.flights.utils.vda_parse import parse_ldm_text
+# from apps.flights.utils.vda_parse import parse_ldm_text
 
 def check_parse(request):
     text = request.POST.get('text')
