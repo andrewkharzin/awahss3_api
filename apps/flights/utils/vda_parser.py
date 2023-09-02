@@ -67,6 +67,7 @@ def parse_msg_slot(text):
                 flights.append(current_flight)
            
             flight_info = line.split(maxsplit=1)
+            
             current_flight = {
                 'flight_number': flight_info[0],
                 'aircraft_type': aircraft_type,
@@ -120,16 +121,21 @@ def parse_msg_slot(text):
         flights.append(current_flight)
     return flights
 
+# Your input message
+message = """
+  AIRCRAFT: IL-76TD-90VD, RA-76951 OR SUBST
+   VDA519 MOSCOW/SHEREMET (SVO/UUEE) ETD 31AUG/0900Z ЗАГРУЗКА
+          ZHENGZHOU/XINZH (CGO/ZHCC) ETA 31AUG/1730Z РАЗГРУЗКА
+ 
+   VDA520 ZHENGZHOU/XINZH (CGO/ZHCC) ETD 31AUG/2150Z ЗАГРУЗКА
+          NOVOSIBIRSK/TOL (OVB/UNNT) ETA 01SEP/0320Z
+   VDA520 NOVOSIBIRSK/TOL (OVB/UNNT) ETD 01SEP/0620Z
+          MOSCOW/SHEREMET (SVO/UUEE) ETA 01SEP/1050Z РАЗГРУЗКА
+"""
 
-# Test message
-test_message = """AIRCRAFT: IL-76TD-90VD, RA-76503 OR SUBST
-   VDA722 ZHENGZHOU/XINZH (CGO/ZHCC) ETD 26AUG/2150Z ЗАГРУЗКА
-   NOVOSIBIRSK/TOL (OVB/UNNT) ETA 27AUG/0320Z
-   VDA722 NOVOSIBIRSK/TOL (OVB/UNNT) ETD 27AUG/0620Z
-   MOSCOW/SHEREMET (SVO/UUEE) ETA 27AUG/1050Z РАЗГРУЗКА"""
-
-# Call the parser function with the test message
-parsed_flights = parse_msg_slot(test_message)
+# Call the parser function with the input message
+parsed_flights = parse_msg_slot(message)
+print(parsed_flights)
 
 # Print the parsed flights
 for parsed_flight in parsed_flights:

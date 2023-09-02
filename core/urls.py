@@ -8,7 +8,9 @@ from graphene_django.views import GraphQLView
 from strawberry.django.views import AsyncGraphQLView
 
 # from graph.schema import schema
+# from graph.schema import schema as root_schema
 from api.apps.flights.gql.schema import schema
+# from api.apps.directory.airlines.gql.schema import schema
 
 urlpatterns = [
     path('admin/', admin.site.urls),

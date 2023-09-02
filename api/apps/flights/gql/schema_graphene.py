@@ -1,20 +1,19 @@
 import graphene
 from graphene_django.types import DjangoObjectType
-from apps.flights.models.flight_model import Flight
 from apps.flights.models.project import FlightProject
 from .types import FlightProjectType
 
 class FlightType(DjangoObjectType):
     class Meta:
-        model = Flight
+        model = FlightProject
 
 class Query(graphene.ObjectType):
-    all_flights = graphene.List(
+    flights = graphene.List(
         FlightType,
+        state_status=graphene.String(),
         airline_iatacode=graphene.String(),
-        flight_type=graphene.String(),
-        handling_status=graphene.String(),
-        date=graphene.String()
+        hand_status=graphene.String(),
+        trip_status=graphene.String(),
     )
 
 

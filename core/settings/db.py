@@ -1,17 +1,17 @@
 from .base import *
 DATABASES = {
-    'postgres': {
+    'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mydatabase',
-        'USER': 'mydatabaseuser',
-        'PASSWORD': 'mypassword',
+        'NAME': 'awahss_db_test',
+        'USER': 'postgres',
+        'PASSWORD': '19831112',
         'HOST': 'localhost',
         'PORT': '5432',
     },
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
 }
 
 # CACHES = {

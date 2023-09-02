@@ -2,39 +2,43 @@
 import strawberry
 from asgiref.sync import sync_to_async
 from typing import List, Optional
-from strawberry_django.optimizer import DjangoOptimizerExtension
-from apps.flights.models.flight_model import Flight
+from django.db.models import QuerySet
+from strawberry_django_optimizer import optimized_django_field
+from apps.flights.models.flight_model import CharterFlight
 from apps.flights.models.project import FlightProject
-from .types import FlightType, FlightProjectType
+from .types import CharterFlightType, FlightProjectType
 
 
-
-# ... Other code ...
-# Define the Query
 @strawberry.type
-class Query:
-    # Query to get all flights
-    # @strawberry.field
-    # def all_flights(self) -> List[FlightType]:
-    #     return Flight.objects.all()
+class FlightQuery:
     
     @strawberry.field
-    def all_flights(self, airline_iatacode: Optional[str] = None, flight_type: Optional[str] = None, handling_status: Optional[str] = None, date: Optional[str] = None) -> List[FlightType]:
-        flights = Flight.objects.all()
-        
+    async def flights(
+        self,
+        airline_iatacode: Optional[str] = None,
+        state_status: Optional[str] = None,
+        hand_status: Optional[str] = None,
+        trip_status: Optional[str] = None
+    ) -> List[CharterFlightType]:
+        # Wrap the database query in sync_to_async
+        queryset = CharterFlight.objects.all()
+
         if airline_iatacode:
-            flights = flights.filter(airline__codeIataAirline=airline_iatacode)
+            queryset = queryset.filter(airline__codeIataAirline=airline_iatacode)
         
-        if flight_type:
-            flights = flights.filter(flight_type=flight_type)
-        
-        if date:
-            flights = flights.filter(date=date)
-        
-        if handling_status:
-            flights = flights.filter(handling_status=handling_status)
+        if state_status:
+            queryset = queryset.filter(state_status=state_status)
+        if hand_status:
+            queryset = queryset.filter(hand_status=hand_status)
+        if trip_status:
+            queryset = queryset.filter(trip_status=trip_status)
+
+        # Use await to execute the query asynchronously
+        flights = await sync_to_async(list)(queryset)
 
         return flights
+
+
     
         
     
@@ -45,55 +49,7 @@ class Query:
         return FlightProject.objects.all()
 
 
-
-@strawberry.type
-class Mutation:
-    @strawberry.mutation
-    def create_flight(
-        self,
-        airline_iatacode: str,
-        flight_type: str,
-        handling_status: str,
-        date: str
-    ) -> FlightType:
-        flight = Flight.objects.create(
-            airline__codeIataAirline=airline_iatacode,
-            flight_type=flight_type,
-            handling_status=handling_status,
-            date=date
-        )
-        return flight
-
-    @strawberry.mutation
-    def update_flight(
-        self,
-        flight_id: int,
-        airline_iatacode: Optional[str] = None,
-        flight_type: Optional[str] = None,
-        handling_status: Optional[str] = None,
-        date: Optional[str] = None
-    ) -> FlightType:
-        flight = Flight.objects.get(pk=flight_id)
-
-        if airline_iatacode:
-            flight.airline__codeIataAirline = airline_iatacode
-
-        if flight_type:
-            flight.flight_type = flight_type
-
-        if date:
-            flight.date = date
-
-        if handling_status:
-            flight.handling_status = handling_status
-
-        flight.save()
-        return flight
     
 schema = strawberry.Schema(
-    query=Query,
-    mutation=Mutation,
-    extensions=[
-        DjangoOptimizerExtension,
-    ],
+    query=FlightQuery,
 )
