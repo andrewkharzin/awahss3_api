@@ -13,22 +13,25 @@ if os.environ.get('DJANGO_ENV') == 'production':
 # Otherwise, use the local settings
 else:
     from .local import *
-    
+
 SECRET_KEY = 'django-insecure-1z6wx-nv6wi&8v=@)_jzj1w!5b_p+i^ncfi4dfr5u%_m&ktwx^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.1.121',
+                 'bba0-94-25-168-214.ngrok-free.app',
+                 ]
 
 # CORS_ORIGIN_WHITELIST = [
-#     "http://localhost:3000", 
+#     "http://localhost:3000",
 #     "http://127.0.0.1:8000",
-#     "http://192.168.1.121:3000",
+#     "http://192.168.1.121:8000",
+#     "http://192.168.1.138:3000",
 #     ]
 
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ALLOW_CREDENTIALS = False
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
@@ -44,7 +47,10 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
-    "http://192.168.1.121:3000"
+    "http://192.168.1.121:3000",
+    "http://192.168.1.138:3000",
+    "https://b40b-94-25-168-214.ngrok-free.app",
+
 ]
 # CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
 
@@ -55,9 +61,6 @@ INSTALLED_APPS = INSTALLED_APPS
 MIDDLEWARE = MIDDLEWARE
 TEMPLATES = TEMPLATES
 DATABASES = DATABASES
- 
-
-
 
 
 WSGI_APPLICATION = 'core.wsgi.application'
@@ -107,6 +110,12 @@ REST_AUTH = {
     "JWT_AUTH_HTTPONLY": False,
 }
 
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'localhost:9200',  # Adjust to your Elasticsearch server's address
+    },
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -118,3 +127,4 @@ USE_I18N = True
 
 USE_TZ = True
 
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 25000

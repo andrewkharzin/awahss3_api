@@ -51,6 +51,7 @@ AUTH_APPS = [
    "allauth.socialaccount",
    "dj_rest_auth",
    "dj_rest_auth.registration",
+   "apps.user_apps.notes",
 ]
 
 

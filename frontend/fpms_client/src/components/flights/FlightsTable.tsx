@@ -318,7 +318,7 @@ const FlightsTable: React.FC = () => {
                   <td className="px-2 text-left">
                     <div className="flex items-center space-x-3">
                       <div className="avatar">
-                        <div className="w-4">
+                        <div className="w-3">
                           <img
                             src={`${BASE_URL}${flight.airline.resolvedCntrLogo}`}
                             alt={flight.airline.callsign}

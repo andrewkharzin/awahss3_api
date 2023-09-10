@@ -8,8 +8,8 @@ from graphene_django.views import GraphQLView
 from strawberry.django.views import AsyncGraphQLView
 
 # from graph.schema import schema
-# from graph.schema import schema as root_schema
-from api.apps.flights.gql.schema import schema
+from graph.root_schema import schema
+# from api.apps.flights.gql.schema import schema
 # from api.apps.directory.airlines.gql.schema import schema
 
 urlpatterns = [
@@ -23,10 +23,11 @@ urlpatterns = [
     path("", include("api.apps.users.urls")),
     path('api/auth/', include('apps.authentication.urls')),
     path("aircrafts/", include("apps.directory.airlines.urls")),
-    path("", include("apps.flights.urls"))
+    path("", include("apps.flights.urls")),
+    path('api/', include('api.apps.user_apps.notes.urls')),
 
     # path('companies/', include('apps.companies.urls'))
 ]
 if settings.DEBUG:
-        urlpatterns += static(settings.MEDIA_URL,
-                              document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)

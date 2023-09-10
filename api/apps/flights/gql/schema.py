@@ -10,8 +10,8 @@ from .types import CharterFlightType, FlightProjectType
 
 
 @strawberry.type
-class FlightQuery:
-    
+class Query:
+
     @strawberry.field
     async def flights(
         self,
@@ -24,8 +24,9 @@ class FlightQuery:
         queryset = CharterFlight.objects.all()
 
         if airline_iatacode:
-            queryset = queryset.filter(airline__codeIataAirline=airline_iatacode)
-        
+            queryset = queryset.filter(
+                airline__codeIataAirline=airline_iatacode)
+
         if state_status:
             queryset = queryset.filter(state_status=state_status)
         if hand_status:
@@ -38,18 +39,13 @@ class FlightQuery:
 
         return flights
 
-
-    
-        
-    
-
     # Query to get all flight projects
+
     @strawberry.field
     def all_flight_projects(self) -> List[FlightProjectType]:
         return FlightProject.objects.all()
 
 
-    
 schema = strawberry.Schema(
-    query=FlightQuery,
+    query=Query,
 )

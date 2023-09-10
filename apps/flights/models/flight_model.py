@@ -47,4 +47,4 @@ class CharterFlight(models.Model):
     trip_status = models.CharField(max_length=20, choices=TRIP_STATUS_CHOICES, default='Opened')
 
     def __str__(self):
-        return f"Flight(Charter)|{self.flight_number}"
+        return f"{self.flight_number}-{self.registration_number}"

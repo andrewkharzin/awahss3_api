@@ -16,6 +16,8 @@ from apps.flights.utils.vda_parser_bb import parse_msg_slot
 from apps.flights.admins.trip_admin import TripFileAdmin
 from apps.flights.models.tripfile_model import TripFile
 from apps.flights.admins.flight_admin import CharterFlightAdmin
+from apps.flights.models.shipment_model import Shipment
+from apps.flights.admins.shipment_admin import ShipmentAdmin
 
 
 # class LDMInline(admin.TabularInline):
@@ -40,11 +42,14 @@ class DocumentInline(admin.TabularInline):
     extra = 1  # Начальное количество инлайновых форм
     max_num = 3  # Максимальное количество инлайновых форм
     can_add = False
+
+
 class FileInline(admin.TabularInline):
     model = File
     extra = 1  # Начальное количество инлайновых форм
     max_num = 3  # Максимальное количество инлайновых форм
     can_add = False
+
 
 class NoteInline(admin.TabularInline):
     model = Note
@@ -52,7 +57,7 @@ class NoteInline(admin.TabularInline):
     max_num = 10  # Максимальное количество инлайновых форм
     can_add = False
 
-    
+
 class FlightProjectAdmin(admin.ModelAdmin):
     list_display = ['flight', 'get_create_by']
     inlines = [DocumentInline, FileInline, NoteInline]
@@ -63,6 +68,7 @@ class FlightProjectAdmin(admin.ModelAdmin):
         return None
 
     get_create_by.short_description = 'Created By'
+
 
 class FlightProjectInline(admin.StackedInline):
     model = FlightProject
@@ -75,3 +81,4 @@ admin.site.register(Note)
 admin.site.register(FlightProject, FlightProjectAdmin)
 admin.site.register(TripFile, TripFileAdmin)
 admin.site.register(CharterFlight, CharterFlightAdmin)
+admin.site.register(Shipment, ShipmentAdmin)

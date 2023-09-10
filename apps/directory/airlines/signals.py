@@ -2,6 +2,8 @@ import os
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from apps.directory.airlines.models.airline import Airline
+from elasticsearch_dsl import Index
+from .airline_index import AirlineIndex
 
 @receiver(post_save, sender=Airline)
 def link_image_to_airline(sender, instance, created, **kwargs):
@@ -30,3 +32,9 @@ def link_image_to_countries(sender, instance, created, **kwargs):
                 instance.cntr_logo = "countries/logos/" + filename
                 instance.save()
                 break
+
+
+# @receiver(post_save, sender=Airline)
+# def index_airline(sender, instance, **kwargs):
+#     index = Index(AirlineIndex._doc_type.index)
+#     index.update_document(instance)

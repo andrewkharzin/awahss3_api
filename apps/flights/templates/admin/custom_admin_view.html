@@ -1,0 +1,16 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="module">
+    <form method="post" action="">
+        {% csrf_token %}
+        <h2>{{ title }}</h2>
+        <ul>
+            {% for shipment in shipments %}
+            <li>{{ shipment }}</li>
+            {% endfor %}
+        </ul>
+        <button type="submit" class="button" name="action" value="run_ffm_action">Run FFM</button>
+    </form>
+</div>
+{% endblock %}

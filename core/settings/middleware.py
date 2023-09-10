@@ -8,4 +8,5 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     # 'django_graphql_ratelimit.middleware.ParseHeadersMiddleware',
+    'author.middlewares.AuthorDefaultBackendMiddleware',
 ]

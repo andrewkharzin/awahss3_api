@@ -1,14 +1,16 @@
 from django.contrib import admin
 from apps.flights.models.flight_model import CharterFlight
 from apps.flights.utils.vda_parser import parse_msg_slot
+from apps.directory.airlines.models.airline import Aircraft
 
 
 class CharterFlightAdmin(admin.ModelAdmin):
-    list_display = ('airline', 'flight_number', 'aircraft_type', 'action_code', 'registration_number', 'iata')
+    list_display = ('airline', 'flight_number', 'aircraft_type',
+                    'action_code', 'registration_number', 'iata')
     actions = ['process_and_create_flights']
     list_filter = ['iata', 'action_code']
 
-
+    raw_id_fields = ['airline', 'aircraft']
 
     def save_model(self, request, obj, form, change):
         if obj.message_code:
@@ -17,14 +19,14 @@ class CharterFlightAdmin(admin.ModelAdmin):
 
             # flight_date = None
             # flight_time = None
-            # flight_date_time = None 
-            
+            # flight_date_time = None
+
             for parsed_flight in parsed_flights:
                 print("Parsing flight:", parsed_flight)
                 action_code = parsed_flight.get('action_code', '')
                 flight_route = parsed_flight.get('flight_route', '')
                 # flight_date_time_str = parsed_flight.get('date_time', '')
-                
+
                 # if ('РАЗГРУЗКА' in action_code or 'ЗАГРУЗКА' in action_code) and 'MOSCOW/SHEREMET' in flight_route:
                 if 'РАЗГРУЗКА' in action_code or 'ЗАГРУЗКА' in action_code:
                     # flight_date_time = datetime.datetime.strptime(flight_date_time_str, '%Y-%m-%d %H:%M:%S')
@@ -32,18 +34,28 @@ class CharterFlightAdmin(admin.ModelAdmin):
                     #     flight_date_time = datetime.datetime.strptime(flight_date_time_str, '%Y-%m-%d %H:%M:%S')
                     #     flight_date = flight_date_time.date()
                     #     flight_time = flight_date_time.time()
-                    
+
                     # Только если условия выполняются, создаем запись
                     flight_number = parsed_flight.get('flight_number', '')
                     aircraft_type = parsed_flight.get('aircraft_type', '')
-                    registration_number = parsed_flight.get('registration_number', '')
+                    registration_number = parsed_flight.get(
+                        'registration_number', '')
                     departure_iata = parsed_flight.get('departure_iata', '')
                     arrival_iata = parsed_flight.get('arrival_iata', '')
                     flight_data_time = parsed_flight.get('date_time', '')
                     if flight_data_time:
-                        formatted_date_time = flight_data_time.strftime('%d.%m.%Y %H:%M')
+                        formatted_date_time = flight_data_time.strftime(
+                            '%d.%m.%Y %H:%M')
                     else:
                         formatted_date_time = None
+
+                    # Search for the aircraft by registration_number in the database
+                    try:
+                        aircraft = Aircraft.objects.get(
+                            registrationNumber=registration_number)
+                        print(aircraft)
+                    except Aircraft.DoesNotExist:
+                        aircraft = None
 
                     slot_msg = f"{flight_number} {aircraft_type} {registration_number} {flight_route} {action_code}"
 
@@ -67,6 +79,7 @@ class CharterFlightAdmin(admin.ModelAdmin):
                         message_code=obj.message_code,
                         action_code=action_code,
                         slot_msg=slot_msg,
+                        aircraft=aircraft
                         # flight_data_time=formatted_date_time
                         # flight_date=flight_date,  # Use flight_date instead of flight_data
                         # flight_time=flight_time
@@ -74,4 +87,3 @@ class CharterFlightAdmin(admin.ModelAdmin):
                     print("Created CharterFlight:", charter_flight)
 
         super().save_model(request, obj, form, change)
-

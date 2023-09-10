@@ -1,6 +1,7 @@
 import re
 from datetime import datetime
 import pytz
+from  apps.directory.airlines.models.airline import Aircraft
 
 timezone = pytz.timezone('UTC') 
 
@@ -116,27 +117,23 @@ def parse_msg_slot(text):
                 current_segment['date_time'] = formatted_date_time
                 
                 current_flight['segments'].append(current_segment)
+                print(current_flight)
 
     if current_flight:
         flights.append(current_flight)
+
+     # Now, let's add the aircraft to the Aircraft model
+    if registration_number:
+        existing_aircraft = Aircraft.objects.filter(registrationNumber=registration_number).first()
+
+        if not existing_aircraft:
+            # Create a new instance of Aircraft with the extracted registration_number.
+            new_aircraft = Aircraft(
+                registration_number=registration_number,
+              # You can set other fields as needed.
+                # Set other fields as needed.
+            )
+
+            # Save the new aircraft instance to the database.
+            new_aircraft.save()
     return flights
-
-# Your input message
-message = """
-  AIRCRAFT: IL-76TD-90VD, RA-76951 OR SUBST
-   VDA519 MOSCOW/SHEREMET (SVO/UUEE) ETD 31AUG/0900Z ЗАГРУЗКА
-          ZHENGZHOU/XINZH (CGO/ZHCC) ETA 31AUG/1730Z РАЗГРУЗКА
- 
-   VDA520 ZHENGZHOU/XINZH (CGO/ZHCC) ETD 31AUG/2150Z ЗАГРУЗКА
-          NOVOSIBIRSK/TOL (OVB/UNNT) ETA 01SEP/0320Z
-   VDA520 NOVOSIBIRSK/TOL (OVB/UNNT) ETD 01SEP/0620Z
-          MOSCOW/SHEREMET (SVO/UUEE) ETA 01SEP/1050Z РАЗГРУЗКА
-"""
-
-# Call the parser function with the input message
-parsed_flights = parse_msg_slot(message)
-print(parsed_flights)
-
-# Print the parsed flights
-for parsed_flight in parsed_flights:
-    print(parsed_flight)

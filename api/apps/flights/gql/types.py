@@ -15,12 +15,12 @@ class CharterFlightType:
     flight_date: Optional[str] 
     flight_time: Optional[str] 
     aircraft_type: Optional[str] 
-    registration_number: str
+    registration_number: Optional[str]
     flight_route: Optional[str] 
-    iata: str
-    icao: str
+    iata: Optional[str] 
+    icao: Optional[str] 
     action_code: Optional[str] 
-    slot_msg: str
+    slot_msg: Optional[str]
     state_status: str
     hand_status: str
     trip_status: str # Note the quotes here
