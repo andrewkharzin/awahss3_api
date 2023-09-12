@@ -3,18 +3,18 @@ import json
 from datetime import datetime
 # from django.utils.timezone import make_aware
 
-# Define a test message
-test_message = """
-FFM/8
-1/HY3123/05SEP2200/TAS/UK67001
-SVO
-ULD/FQA0362HY
-250-91841956HKGSVO/S2K808MC1T51/CABLE FAST LOCK
-/SPX
-ULD/FQA0372HY
-250-91840781HKGSVO/S22K422MC1T158/CPU SOLID STATE
-/SPX
-"""
+# # Define a test message
+# test_message = """
+# FFM/8
+# 1/HY3123/05SEP2200/TAS/UK67001
+# SVO
+# ULD/FQA0362HY
+# 250-91841956HKGSVO/S2K808MC1T51/CABLE FAST LOCK
+# /SPX
+# ULD/FQA0372HY
+# 250-91840781HKGSVO/S22K422MC1T158/CPU SOLID STATE
+# /SPX
+# """
 
 
 def parse_custom_date(date_str):
@@ -46,13 +46,13 @@ def parse_custom_date(date_str):
     return formatted_date
 
 
-def parse_message(message):
+def parse_message(text):
 
     # Define a regular expression pattern to match the header with the MULTILINE flag
     header_pattern = r'^FFM/\d+\n(\d+)/([A-Z0-9]+)/(\d{2}[A-Z]{3}\d{4})/([A-Z]+)/([A-Z0-9]+)\n'
 
     # Match the header information
-    header_match = re.search(header_pattern, message, re.MULTILINE)
+    header_match = re.search(header_pattern, text, re.MULTILINE)
 
     if header_match:
         version, flight, date, iata, registration = header_match.groups()
@@ -63,7 +63,7 @@ def parse_message(message):
     uld_pattern = r'ULD/([A-Z0-9]+)\n(\d+-\d+)(HKG|SVO)([A-Z]+)/(S|P|T)(\d+)K(\d+)MC(\d+)T(\d+)/(.+?)\n/(SPX|ELI/SPX)?'
 
     # Match ULD information
-    matches = re.finditer(uld_pattern, message)
+    matches = re.finditer(uld_pattern, text)
 
     date = parse_custom_date(date)
     parsed_data_list = []
@@ -98,8 +98,8 @@ def parse_message(message):
     return parsed_data_json
 
 
-# Call the parse_message function with the test message
-parsed_data_json = parse_message(test_message)
+# # Call the parse_message function with the test message
+# parsed_data_json = parse_message(test_message)
 
-# Print the parsed data (as JSON)
-print(parsed_data_json)
+# # Print the parsed data (as JSON)
+# print(parsed_data_json)

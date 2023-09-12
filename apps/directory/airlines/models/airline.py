@@ -8,7 +8,7 @@ from django.utils.html import mark_safe
 
 def aircraft_image_path(instance, filename):
     # Dynamic upload path logic using the airline and registration_number
-    return f'airlines/banners/{instance.airline}/{instance.registration_number}/{filename}'
+    return f'airlines/banners/{instance.airline}/{instance.registrationNumber}/{filename}'
 
 
 def airline_banner_directory_path(instance, filename):
@@ -78,7 +78,7 @@ class Aircraft(models.Model):
     codeIataAirline = models.CharField(max_length=4, null=True, blank=True)
     registrationNumber = models.CharField(
         max_length=20, blank=True, null=True)
-    ac_code = models.CharField(
+    acCode = models.CharField(
         max_length=4, blank=True, null=True)  # Add ICAO field
     # iata = models.CharField(max_length=3, null=True, blank=True)  # Add IATA field
     model = models.CharField(max_length=100, blank=True, null=True)
@@ -86,4 +86,4 @@ class Aircraft(models.Model):
                               default="airlines/banners/default_ac.jpeg")  # Add image field
 
     def __str__(self):
-        return f"{self.registrationNumber}"
+        return f"{self.model}-{self.registrationNumber}"

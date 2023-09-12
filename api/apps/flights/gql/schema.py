@@ -5,8 +5,9 @@ from typing import List, Optional
 from django.db.models import QuerySet
 from strawberry_django_optimizer import optimized_django_field
 from apps.flights.models.flight_model import CharterFlight
+from apps.flights.models.tripfile_model import TripFile
 from apps.flights.models.project import FlightProject
-from .types import CharterFlightType, FlightProjectType
+from .types import CharterFlightType, TripFileType
 
 
 @strawberry.type
@@ -22,6 +23,7 @@ class Query:
     ) -> List[CharterFlightType]:
         # Wrap the database query in sync_to_async
         queryset = CharterFlight.objects.all()
+        # queryset = FlightProject.objects.all()
 
         if airline_iatacode:
             queryset = queryset.filter(
@@ -38,12 +40,29 @@ class Query:
         flights = await sync_to_async(list)(queryset)
 
         return flights
+    
+    @strawberry.field
+    async def tripfiles(
+        self,
+        flight_number: Optional[str] = None,
+        # Add more filters as needed
+    ) -> List[TripFileType]:
+        # Wrap the database query in sync_to_async
+        queryset = TripFile.objects.all()
+
+        if flight_number:
+            queryset = queryset.filter(charter_flight__flight_number=flight_number)
+
+        # Use await to execute the query asynchronously
+        tripfiles = await sync_to_async(list)(queryset)
+
+        return tripfiles
 
     # Query to get all flight projects
 
-    @strawberry.field
-    def all_flight_projects(self) -> List[FlightProjectType]:
-        return FlightProject.objects.all()
+    # @strawberry.field
+    # def all_flight_projects(self) -> List[FlightProjectType]:
+    #     return FlightProject.objects.all()
 
 
 schema = strawberry.Schema(

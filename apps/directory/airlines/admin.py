@@ -50,8 +50,8 @@ class AilineAdmin(ImportExportModelAdmin):
 class AircraftResource(resources.ModelResource):
     class Meta:
         model = Aircraft
-        fields = ('id', 'registration_number',
-                  'ac_code', 'codeIataAirline', 'model',)
+        fields = ('id', 'registrationNumber',
+                  'acCode', 'codeIataAirline', 'model',)
 
     # def get_import_id_fields(self):
     #     return ['id']
@@ -63,7 +63,7 @@ class AircraftAdmin(ImportExportModelAdmin):
     # resource_class = [AircraftResource]
     resource_class = AircraftResource
     list_display = ('registrationNumber',
-                    'codeIataAirline', 'ac_code', 'model',)
+                    'codeIataAirline', 'acCode', 'model',)
     list_filter = ('codeIataAirline',)
     search_fields = ('codeIataAirline', 'registrationNumber',)
 
