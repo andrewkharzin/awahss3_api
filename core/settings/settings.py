@@ -15,16 +15,15 @@ if os.environ.get('DJANGO_ENV') == 'production':
 else:
     from .local import *
 
-SECRET_KEY = 'django-insecure-1z6wx-nv6wi&8v=@)_jzj1w!5b_p+i^ncfi4dfr5u%_m&ktwx^'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 load_dotenv(BASE_DIR / '.env')  # new
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.1.121',
-                 'bba0-94-25-168-214.ngrok-free.app',
-                 ]
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.getenv('DEBUG', '0').lower() in ['true', 't', '1']
+
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(' ')
 
 # CORS_ORIGIN_WHITELIST = [
 #     "http://localhost:3000",
