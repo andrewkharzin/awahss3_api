@@ -4,7 +4,8 @@ from datetime import timedelta
 from .middleware import *
 from .templates import *
 from .db import *
-
+from pathlib import Path
+from dotenv import load_dotenv 
 
 # If the environment variable DJANGO_ENV is set to 'production', use the production settings
 if os.environ.get('DJANGO_ENV') == 'production':
@@ -15,6 +16,8 @@ else:
     from .local import *
 
 SECRET_KEY = 'django-insecure-1z6wx-nv6wi&8v=@)_jzj1w!5b_p+i^ncfi4dfr5u%_m&ktwx^'
+
+load_dotenv(BASE_DIR / '.env')  # new
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
