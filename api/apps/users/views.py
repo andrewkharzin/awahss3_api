@@ -8,7 +8,7 @@ from rest_framework import filters
 from rest_framework.views import APIView
 from .serializers import UserSerializer
 from rest_framework.response import Response
-
+from drf_spectacular.utils import extend_schema
 
 
 class UserViewSet(viewsets.ModelViewSet):

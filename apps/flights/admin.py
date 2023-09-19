@@ -16,8 +16,8 @@ from apps.flights.utils.vda_parser_bb import parse_msg_slot
 from apps.flights.admins.trip_admin import TripFileAdmin
 from apps.flights.models.tripfile_model import TripFile
 from apps.flights.admins.flight_admin import CharterFlightAdmin
-from apps.flights.models.shipment_model import Shipment
-from apps.flights.admins.shipment_admin import ShipmentAdmin
+from apps.flights.models.shipment_model import ULD, Shipment
+from apps.flights.admins.shipment_admin import ULDAdmin, ShipmentAdmin
 
 
 # class LDMInline(admin.TabularInline):
@@ -81,4 +81,5 @@ admin.site.register(Note)
 admin.site.register(FlightProject, FlightProjectAdmin)
 admin.site.register(TripFile, TripFileAdmin)
 admin.site.register(CharterFlight, CharterFlightAdmin)
+admin.site.register(ULD, ULDAdmin)
 admin.site.register(Shipment, ShipmentAdmin)

@@ -23,17 +23,19 @@ THIRDPARTY_APPS = [
     'author',
     'channels',
     'django_bookmark_base',
-    "taggit", 
+    "taggit",
     'dynamic_raw_id',
     'django_select2',
     'admin_auto_filters',
     'django_nextjs',
 
 ]
-    
+
 PROJECT_APPS = [
     'apps.users',
     'apps.directory.airlines',
+    'apps.directory.aviastates.shc',
+    'apps.directory.aviastates.dgr',
     'apps.flights',
     'apps.companies',
     'apps.schedules',
@@ -41,17 +43,17 @@ PROJECT_APPS = [
 ]
 
 AUTH_APPS = [
-   'corsheaders',
-   "apps.authentication",
-   'rest_framework',
-   'rest_framework_simplejwt',
-   "rest_framework.authtoken",
-   "allauth",
-   "allauth.account",
-   "allauth.socialaccount",
-   "dj_rest_auth",
-   "dj_rest_auth.registration",
-   "apps.user_apps.notes",
+    'corsheaders',
+    "apps.authentication",
+    'rest_framework',
+    'rest_framework_simplejwt',
+    "rest_framework.authtoken",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "dj_rest_auth",
+    "dj_rest_auth.registration",
+    "apps.user_apps.notes",
 ]
 
 

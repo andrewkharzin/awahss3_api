@@ -26,12 +26,14 @@ class LoginSerializer(TokenObtainPairSerializer):
 
 
 class RegisterSerializer(UserSerializer):
-    password = serializers.CharField(max_length=128, min_length=8, write_only=True, required=True)
-    email = serializers.EmailField(required=True, write_only=True, max_length=128)
+    password = serializers.CharField(
+        max_length=128, min_length=8, write_only=True, required=True)
+    email = serializers.EmailField(
+        required=True, write_only=True, max_length=128)
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'password', 'is_active', 'created', 'updated']
+        fields = ['id', 'email', 'password', 'is_active', ]
 
     def create(self, validated_data):
         try:

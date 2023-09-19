@@ -24,7 +24,7 @@ class TelexInline(admin.TabularInline):
     classes = ['collapse']
 
 class TripFileAdmin(admin.ModelAdmin):
-    list_display = ['id']
+    list_display = ['trip_number', 'charter_flight']
     inlines = [MsgStoreInline, TelexInline, EventInline, AttchInline]
 
 

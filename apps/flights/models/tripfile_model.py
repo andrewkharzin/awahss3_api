@@ -4,16 +4,21 @@ from apps.users.models import User
 from django.utils import timezone
 # from .flight_model import CharterFlight
 from apps.flights.models.file_model import File
+from apps.flights.models.flight_model import CharterFlight
 
 
 class TripFile(models.Model):
-    
-    trip_number = models.CharField(max_length=20, editable=False)
-    createAt = models.DateTimeField(auto_created=True)
-    updateAt = models.DateTimeField(auto_now_add=True)
-    # unique_id = models.CharField(max_length=100, editable=False, unique=True)  # Auto-generated based on your template
-    # charter_flight = models.OneToOneField(CharterFlight, on_delete=models.CASCADE)
-    # Add other fields specific to TripFile
+    charter_flight = models.ForeignKey(
+        CharterFlight,
+        on_delete=models.CASCADE,  # Adjust the on_delete behavior as needed
+        related_name='tripfile',
+        blank=True,
+        null=True  # You can customize the related_name
+    )
+
+    trip_number = models.CharField(max_length=100, unique=True, editable=False)
+    createAt = models.DateTimeField(auto_now_add=True)
+    updateAt = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
         if not self.trip_number:
@@ -21,7 +26,7 @@ class TripFile(models.Model):
             serial_number = str(uuid.uuid4().int)[:6]
 
             # Format the trip_number using flight_number, createAt, and serial_number
-            self.trip_number = f"{self.charter_flight.flight_number}-{self.createAt.strftime('%Y%m%d')}-{serial_number}"
+            self.trip_number = f"{self.charter_flight.flight_number}-{serial_number}"
 
         super().save(*args, **kwargs)
 

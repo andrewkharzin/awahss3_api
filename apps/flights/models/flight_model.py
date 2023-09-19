@@ -3,7 +3,6 @@ import logging
 from apps.flights.utils.vda_parser_bb import parse_msg_slot
 from utility.date_format import format_date_template
 from apps.directory.airlines.models.airline import Airline, Aircraft
-from apps.flights.models.tripfile_model import TripFile
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +32,6 @@ class CharterFlight(models.Model):
         Airline, on_delete=models.CASCADE, null=True, blank=True)
     aircraft = models.ForeignKey(
         Aircraft, on_delete=models.CASCADE, null=True, blank=True)
-    tripfile = models.ForeignKey(
-        TripFile, on_delete=models.CASCADE, null=True, blank=True)
     flight_number = models.CharField(max_length=20, null=True, blank=True)
     flight_date = models.DateField(null=True, blank=True)
     flight_time = models.TimeField(null=True, blank=True)

@@ -1,7 +1,9 @@
 from django.contrib import admin
+from datetime import timezone
 from apps.flights.models.flight_model import CharterFlight
 from apps.flights.utils.vda_parser import parse_msg_slot
-from apps.directory.airlines.models.airline import Aircraft
+from apps.directory.airlines.models.airline import Aircraft, Airline
+from apps.flights.models.tripfile_model import TripFile
 
 
 class CharterFlightAdmin(admin.ModelAdmin):
@@ -43,6 +45,7 @@ class CharterFlightAdmin(admin.ModelAdmin):
                     departure_iata = parsed_flight.get('departure_iata', '')
                     arrival_iata = parsed_flight.get('arrival_iata', '')
                     flight_data_time = parsed_flight.get('date_time', '')
+
                     if flight_data_time:
                         formatted_date_time = flight_data_time.strftime(
                             '%d.%m.%Y %H:%M')
@@ -54,8 +57,10 @@ class CharterFlightAdmin(admin.ModelAdmin):
                         aircraft = Aircraft.objects.get(
                             registrationNumber=registration_number)
                         print(aircraft)
+                    
                     except Aircraft.DoesNotExist:
                         aircraft = None
+                    
 
                     slot_msg = f"{flight_number} {aircraft_type} {registration_number} {flight_route} {action_code}"
 
@@ -68,22 +73,31 @@ class CharterFlightAdmin(admin.ModelAdmin):
                     print("departure_iata:", departure_iata)
                     print("arrival_iata:", arrival_iata)
                     print("action_code:", action_code)
+                
+                    if flight_number:
 
-                    charter_flight = CharterFlight.objects.create(
-                        flight_number=flight_number,
-                        aircraft_type=aircraft_type,
-                        registration_number=registration_number,
-                        flight_route=flight_route,
-                        iata=departure_iata,
-                        icao=arrival_iata,
-                        message_code=obj.message_code,
-                        action_code=action_code,
-                        slot_msg=slot_msg,
-                        aircraft=aircraft
-                        # flight_data_time=formatted_date_time
-                        # flight_date=flight_date,  # Use flight_date instead of flight_data
-                        # flight_time=flight_time
-                    )
-                    print("Created CharterFlight:", charter_flight)
+                        charter_flight = CharterFlight.objects.create(
+                            flight_number=flight_number,
+                            aircraft_type=aircraft_type,
+                            registration_number=registration_number,
+                            flight_route=flight_route,
+                            iata=departure_iata,
+                            icao=arrival_iata,
+                            message_code=obj.message_code,
+                            action_code=action_code,
+                            slot_msg=slot_msg,
+                            aircraft=aircraft
+                            # flight_data_time=formatted_date_time
+                            # flight_date=flight_date,  # Use flight_date instead of flight_data
+                            # flight_time=flight_time
+                        )
+                        print("Created CharterFlight:", charter_flight)
+
+                         # Create or retrieve the associated TripFile
+                        trip_file = TripFile.objects.create(charter_flight=charter_flight)
+                        trip_file.save()
+
+
+    
 
         super().save_model(request, obj, form, change)

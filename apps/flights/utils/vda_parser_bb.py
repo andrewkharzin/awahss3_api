@@ -121,16 +121,16 @@ def parse_msg_slot(text):
     return flights
 
 
-# # Test message
-# test_message = """AIRCRAFT: IL-76TD-90VD, RA-76503 OR SUBST
-#    VDA722 ZHENGZHOU/XINZH (CGO/ZHCC) ETD 26AUG/2150Z ЗАГРУЗКА
-#    NOVOSIBIRSK/TOL (OVB/UNNT) ETA 27AUG/0320Z
-#    VDA722 NOVOSIBIRSK/TOL (OVB/UNNT) ETD 27AUG/0620Z
-#    MOSCOW/SHEREMET (SVO/UUEE) ETA 27AUG/1050Z РАЗГРУЗКА"""
+# Test message
+test_message = """AIRCRAFT: IL-76TD-90VD, RA-76503 OR SUBST
+   VDA722 ZHENGZHOU/XINZH (CGO/ZHCC) ETD 26AUG/2150Z ЗАГРУЗКА
+   NOVOSIBIRSK/TOL (OVB/UNNT) ETA 27AUG/0320Z
+   VDA722 NOVOSIBIRSK/TOL (OVB/UNNT) ETD 27AUG/0620Z
+   MOSCOW/SHEREMET (SVO/UUEE) ETA 27AUG/1050Z РАЗГРУЗКА"""
 
-# # Call the parser function with the test message
-# parsed_flights = parse_msg_slot(test_message)
+# Call the parser function with the test message
+parsed_flights = parse_msg_slot(test_message)
 
-# # Print the parsed flights
-# for parsed_flight in parsed_flights:
-#     print(parsed_flight)
+# Print the parsed flights
+for parsed_flight in parsed_flights:
+    print(parsed_flight)

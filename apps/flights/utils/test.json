@@ -1,36 +1,50 @@
-[
-    {
-        "version": "1",
-        "flight_number": "HY3123",
-        "date": "2023-09-05 22:00:00",
-        "iata": "TAS",
-        "registration_number": "UK67001",
-        "uld_number": "FQA0362HY",
-        "awb": "250-91841956",
-        "route_from": "HKG",
-        "route_to": "SVO",
-        "pieces_type": "S2",
-        "kilos": 808,
-        "cubic_meter": 1,
-        "last_pics": 51,
-        "goods": "CABLE FAST LOCK",
-        "special_handling_code": "SPX"
-    },
-    {
-        "version": "1",
-        "flight_number": "HY3123",
-        "date": "2023-09-05 22:00:00",
-        "iata": "TAS",
-        "registration_number": "UK67001",
-        "uld_number": "FQA0372HY",
-        "awb": "250-91840781",
-        "route_from": "HKG",
-        "route_to": "SVO",
-        "pieces_type": "S22",
-        "kilos": 422,
-        "cubic_meter": 1,
-        "last_pics": 158,
-        "goods": "CPU SOLID STATE",
-        "special_handling_code": "SPX"
-    }
-]
+{
+    "version": "1",
+    "flight_number": "HY3123",
+    "date": "2023-09-05 20:0:00",
+    "iata": "TAS",
+    "registration_number": "UK67001",
+    "uld_list": [
+        {
+            "uld_number": "FQA0362HY",
+            "awb": "250-91841956",
+            "route_from": "HKG",
+            "route_to": "SVO",
+            "pieces_type": "S",
+            "pieces": "2",
+            "kilos": 808,
+            "cubic_meter": "1.000",
+            "last_pics": 51,
+            "goods": "CABLE FAST LOCK",
+            "special_handling_code": "SPX"
+        },
+        {
+            "uld_number": "FQA0372HY",
+            "awb": "250-91840781",
+            "route_from": "HKG",
+            "route_to": "SVO",
+            "pieces_type": "S",
+            "pieces": "22",
+            "kilos": 422,
+            "cubic_meter": "1.000",
+            "last_pics": 158,
+            "goods": "CPU SOLID STATE",
+            "special_handling_code": "SPX"
+        },
+        {
+            "uld_number": "FQA0372HY",
+            "awb": "250-91841956",
+            "route_from": "HKG",
+            "route_to": "SVO",
+            "pieces_type": "S",
+            "pieces": "2",
+            "kilos": 790,
+            "cubic_meter": "1.000",
+            "last_pics": 51,
+            "goods": "CABLE FAST LOCK",
+            "special_handling_code": "SPX"
+        },
+        ....
+
+    ]
+}
